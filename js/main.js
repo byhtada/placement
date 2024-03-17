@@ -110,7 +110,7 @@ $( document ).ready(function() {
 
         const headers = {
             'Authorization': 'Token token=123',// + cookie_token,
-            'Content-type': 'text/plain',
+            'Content-type':  'application/json',
         }
 
         fetch(`${api_url}create_user`, {

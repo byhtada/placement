@@ -65,10 +65,10 @@ $( document ).ready(function() {
 
     const input_tg = document.getElementById("user_tg")
     const input_vk = document.getElementById("user_vk")
-    input_name.value = "1"
-    input_phone.value = "1"
-    input_tg.value = "1"
-    input_vk.value = "1"
+    input_name.value  = "2"
+    input_phone.value = "2"
+    input_tg.value    = "2"
+    input_vk.value    = "2"
 
     function clickBtnRegister(){
         const current_page = parseInt(this.parentElement.getAttribute("data-page"))
@@ -118,6 +118,7 @@ $( document ).ready(function() {
             body: JSON.stringify(body),
             headers: headers
         }).then(response => {
+            setCookie(cookie_name_token, "1")
             console.log(response.json())
         })
     }

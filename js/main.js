@@ -65,10 +65,10 @@ $( document ).ready(function() {
 
     const input_tg = document.getElementById("user_tg")
     const input_vk = document.getElementById("user_vk")
-    input_name.value  = "2"
-    input_phone.value = "2"
-    input_tg.value    = "2"
-    input_vk.value    = "2"
+    input_name.value  = ""
+    input_phone.value = ""
+    input_tg.value    = ""
+    input_vk.value    = ""
 
     function clickBtnRegister(){
         const current_page = parseInt(this.parentElement.getAttribute("data-page"))

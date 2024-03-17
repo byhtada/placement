@@ -11,7 +11,7 @@ $( document ).ready(function() {
 
 
     var api_url = "http://127.0.0.1:3000/";
-    api_url = "https://ro-api-autumn-mountain-9678.fly.dev/";
+   // api_url = "https://ro-api-autumn-mountain-9678.fly.dev/";
 //    //api_url = "https://cc1d-2a00-f940-1-1-2-00-650.ngrok-free.app/"
     let work_mode = 'dev'
     if (window.location.href.includes("teremok")) {
@@ -65,6 +65,10 @@ $( document ).ready(function() {
 
     const input_tg = document.getElementById("user_tg")
     const input_vk = document.getElementById("user_vk")
+    input_name.value = "1"
+    input_phone.value = "1"
+    input_tg.value = "1"
+    input_vk.value = "1"
 
     function clickBtnRegister(){
         const current_page = parseInt(this.parentElement.getAttribute("data-page"))
@@ -96,18 +100,26 @@ $( document ).ready(function() {
 
 
     function createUser(){
-        sendRequest('post', 'create_user', {
+
+        let body = {
             name: input_name.value,
             phone: input_phone.value,
-
             tg: input_tg.value,
             vk: input_vk.value,
+        }
+
+        const headers = {
+            'Authorization': 'Token token=123',// + cookie_token,
+            'Content-type': 'text/plain',
+        }
+
+        fetch(`${api_url}create_user`, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: headers
+        }).then(response => {
+            console.log(response.json())
         })
-            .then(data => {
-                cookie_token = "1"
-                setCookie(cookie_name_token, cookie_token, 3600)
-            })
-            .catch(err => console.log(err))
     }
 
     async function getAllData(){
@@ -464,9 +476,8 @@ $( document ).ready(function() {
 
     function sendRequest(type, url, body = null) {
         const headers = {
-            'Authorization': 'Token token=122',// + cookie_token,
+            'Authorization': 'Token token=123',// + cookie_token,
             'Content-type': 'application/json',
-
         }
 
         return fetch(`${api_url}${url}`, {

@@ -11,7 +11,7 @@ $( document ).ready(function() {
 
 
     var api_url = "http://127.0.0.1:3000/";
-   // api_url = "https://ro-api-autumn-mountain-9678.fly.dev/";
+    api_url = "https://ro-api-autumn-mountain-9678.fly.dev/";
 //    //api_url = "https://cc1d-2a00-f940-1-1-2-00-650.ngrok-free.app/"
     let work_mode = 'dev'
     if (window.location.href.includes("teremok")) {

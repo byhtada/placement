@@ -11,14 +11,15 @@ $( document ).ready(function() {
 
 
     var api_url = "http://127.0.0.1:3000/";
-    api_url = "https://roapi2-production.up.railway.app/";
+    api_url = "http://0.0.0.0:3000/";
+    api_url = "https://ro-api-2-delicate-wind-6834.fly.dev/";
 //    //api_url = "https://cc1d-2a00-f940-1-1-2-00-650.ngrok-free.app/" //
     let work_mode = 'dev'
     if (window.location.href.includes("teremok")) {
         work_mode = 'prod'
     }
     if (work_mode == 'prod') {
-        api_url = "https:dd//intense-chamber-90745-66882628bd57.herokuapp.com/"
+       // api_url = "https:dd//intense-chamber-90745-66882628bd57.herokuapp.com/"
        // api_url = "https://cc1d-2a00-f940-1-1-2-00-650.ngrok-free.app/"
     }
 

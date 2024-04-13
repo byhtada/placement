@@ -11,10 +11,23 @@ $( document ).ready(function() {
 
 
     var api_url = "http://127.0.0.1:3000/";
-    api_url = "http://0.0.0.0:3000/";
-    api_url = "https://ro-api-2-delicate-wind-6834.fly.dev/";
-//    //api_url = "https://cc1d-2a00-f940-1-1-2-00-650.ngrok-free.app/" //
+    //api_url = "http://0.0.0.0:3000/";
+   // api_url = "https://ro-api-2-delicate-wind-6834.fly.dev/";
+    api_url = "https://ro-api-fly.fly.dev/"
     let work_mode = 'dev'
+
+
+    const input_name     = document.getElementById("user_name")
+    const input_phone    = document.getElementById("user_phone")
+    const input_password    = document.getElementById("user_password")
+
+    const input_messenger    = document.getElementById("user_messenger")
+    const input_social_media = document.getElementById("user_social_media")
+    input_name.value  = "2"
+    input_phone.value = "2"
+    input_messenger.value    = "2"
+    input_social_media.value    = "2"
+
     if (window.location.href.includes("teremok")) {
         work_mode = 'prod'
     }
@@ -44,85 +57,225 @@ $( document ).ready(function() {
         console.log("start_time ", start_time)
         console.log("cookie_token ", cookie_token)
 
-        if (typeof cookie_token == 'undefined' || cookie_token == 'undefined') {
+        if (typeof cookie_token == 'undefined' || cookie_token == 'undefined' || cookie_token == '') {
             document.getElementById("page_load").style.display = 'none'
             document.getElementById("page_register").style.display = 'flex'
-            document.querySelector(".reg_pages[data-page='1']").style.display = 'block'
+
+            showRegPage(1)
         } else {
-            document.getElementById("page_load").style.display = 'none'
-            document.getElementById("page_register").style.display = 'flex'
-            document.querySelector(".reg_pages[data-page='3']").style.display = 'block'
+            //openAdminPage()
+            getAllData()
+
         }
     }
 
 
-    Array.from(document.getElementsByClassName("btn_register")).forEach(function(element) {
-        element.addEventListener('click', clickBtnRegister  )
-    })
-
-
-    const input_name     = document.getElementById("user_name")
-    const input_phone    = document.getElementById("user_phone")
-
-    const input_tg = document.getElementById("user_tg")
-    const input_vk = document.getElementById("user_vk")
-    input_name.value  = ""
-    input_phone.value = ""
-    input_tg.value    = ""
-    input_vk.value    = ""
-
-    function clickBtnRegister(){
-        const current_page = parseInt(this.parentElement.getAttribute("data-page"))
-
-
-        if (current_page == 1){
-            if (input_name.value == "" || input_phone.value == "") {
-                document.getElementById("div_reg_alert_1").style.display = "block"
-                return;
-            }
-        }
-        if (current_page == 2){
-            if (input_tg.value == "" || input_vk.value == "" ) {
-                document.getElementById("div_reg_alert_2").style.display = "block"
-                return;
-            } else {
-                createUser()
-            }
+    document.getElementById('btn_register_1').addEventListener('click', function(){
+        if (input_name.value == "" || input_phone.value == "" || input_password.value == "") {
+            document.getElementById("div_reg_alert_1").style.display = "block"
+            return;
         }
 
-        Array.from(document.getElementsByClassName("reg_pages")).forEach(function(element) {
-            element.style.display = "none"
-        })
-        document.querySelector(`.reg_pages[data-page="${current_page + 1}"]`).style.display = "block"
-
-
-    }
-
-
-
-    function createUser(){
-
-        let body = {
-            name: input_name.value,
-            phone: input_phone.value,
-            tg: input_tg.value,
-            vk: input_vk.value,
-        }
 
         const headers = {
             'Authorization': 'Token token=123',// + cookie_token,
             'Content-type':  'application/json',
         }
 
-        fetch(`${api_url}create_user`, {
+        let body = {
+            name:     input_name.value,
+            phone:    input_phone.value,
+            password: input_password.value,
+        }
+
+
+        fetch(`${api_url}reg_user`, {
             method: "POST",
             body: JSON.stringify(body),
             headers: headers
-        }).then(response => {
-            setCookie(cookie_name_token, "1")
-            console.log(response.json())
+        }).then( response => response.json() )
+            .then( data => {
+                console.log(data)
+                cookie_token = data.token
+                setCookie(cookie_name_token, cookie_token, 3600)
+
+
+                showRegPage(2)
+
+            })
+            .catch( error => console.error('error:', error) );
+    })
+
+    document.getElementById('btn_register_2').addEventListener('click', function(){
+        if (input_messenger.value == "" || input_social_media.value == "" ) {
+            document.getElementById("div_reg_alert_2").style.display = "block"
+            return;
+        }
+
+
+        sendRequest('post', 'reg_step_2', {
+            messenger:     input_messenger.value,
+            social_media:  input_social_media.value,
         })
+            .then(data => {
+                showRegPage(3)
+            })
+            .catch(err => console.log(err))
+
+    })
+
+
+    let test_questions = [
+        {question: "Вопрос 1",
+         answers:  [{text: "Ответ 1", result: 0},
+                    {text: "Ответ 2", result: 0},
+                    {text: "Ответ 3!", result: 1},
+                    {text: "Ответ 4", result: 0}]
+        },
+        {question: "Вопрос 2",
+         answers:  [{text: "Ответ 1", result: 0},
+                    {text: "Ответ 2", result: 0},
+                    {text: "Ответ 3!", result: 1},
+                    {text: "Ответ 4", result: 0}]
+        },
+        {question: "Вопрос 3",
+         answers:  [{text: "Ответ 1", result: 0},
+                    {text: "Ответ 2", result: 0},
+                    {text: "Ответ 3!", result: 1},
+                    {text: "Ответ 4", result: 0}]
+        },
+    ]
+    let test_num    = 0
+    let test_result = 0
+
+    document.getElementById('btn_register_3').addEventListener('click', function(){
+        showRegPage(4)
+        setNewTestQuestion()
+    })
+
+    function setNewTestQuestion(){
+        if (test_num == test_questions.length){
+            let result = 100 * test_result / test_questions.length
+            if (result >= 80){
+                sendRequest('post', 'reg_test', {test_result: result})
+                    .then(data => {  })
+                    .catch(err => console.log(err))
+                showRegPage(5)
+            } else {
+                alert("Ваше результат менее 80%, пройдите тест ещё раз")
+                test_num    = 0
+                test_result = 0
+                setNewTestQuestion()
+            }
+
+            return
+        }
+
+
+        let current = test_questions[test_num]
+
+        document.getElementById("reg_question_text").innerText = current.question
+
+        let html = ''
+        current.answers.forEach(item => {
+            html += `<div class="test_answer" data-result="${item.result}">${item.text}</div>`
+        })
+        document.getElementById("reg_question_answers").innerHTML = html
+
+
+        Array.from(document.getElementsByClassName("test_answer")).forEach(function(element) {
+            element.addEventListener('click', clickTestAnswer  )
+        })
+        function clickTestAnswer(){
+            test_num += 1
+            test_result += parseInt(this.getAttribute("data-result"))
+
+            setNewTestQuestion()
+        }
+
     }
+
+
+    let user_actions = [
+        {header: "Дружина", description: "Силовой блок. Выезд на сигнал SOS. Помощь силовикам."},
+        {header: "Поддержка СВО", description: "Разбор, подготовка и отправка гуманитарной помощи, прием гуманитарной помощи от населения и т.д."},
+        {header: "Благотворительность", description: "Участие в волонтерской деятельности, не требующей больших физических усилий"},
+        {header: "Юридическое подразделение", description: "Оказание поддержики в юридической плоскости"},
+        {header: "Секретариат", description: "Мониторинг и модерация чатов общины"},
+        {header: "Медиа отдел", description: "Написание текстов, обработка фото и видео материалов работа с графикой"},
+        {header: "Бизнес клуб", description: "Закрытое сообщество предпринимателей. Есть обязательный взнос"},
+
+    ]
+
+    setUserActions()
+    function setUserActions(){
+
+        let html = ''
+        user_actions.forEach(item => {
+            html += `<div class="user_action">
+                       <div class="header">${item.header}</div>
+                       <div class="descr">${item.description}</div>
+                    </div>`
+        })
+
+        document.getElementById('div_user_actions').innerHTML = html
+
+        Array.from(document.getElementsByClassName("user_action")).forEach(function(element) {
+            element.addEventListener('click',  selectUserAction )
+        })
+
+        function selectUserAction(){
+            if (this.classList.contains("active")) {
+                this.classList.remove("active")
+            } else {
+                this.classList.add("active")
+            }
+        }
+    }
+
+
+
+    document.getElementById('btn_register_5').addEventListener('click', function(){
+        let interests = []
+        Array.from(document.getElementsByClassName("user_action")).forEach(function(element) {
+            if (element.classList.contains("active")) {
+                interests.push(element.querySelector('.header').innerText)
+            }
+        })
+
+        sendRequest('post', 'reg_interests', {interests: interests})
+            .then(data => {
+                showRegPage(6)
+            })
+            .catch(err => console.log(err))
+    })
+
+
+
+
+
+    function showRegPage(num){
+        Array.from(document.getElementsByClassName("reg_pages")).forEach(function(element) {
+            element.style.display = "none"
+        })
+        document.querySelector(`.reg_pages[data-page="${num}"]`).style.display = "block"
+    }
+
+
+
+    Array.from(document.getElementsByClassName("container_info")).forEach(function(element) {
+        element.addEventListener('click', openInfoBlock  )
+    })
+    function openInfoBlock(){
+        const content_block = this.querySelector('.content')
+
+        if (content_block.style.display == "none") {
+            content_block.style.display = "block"
+        } else {
+            content_block.style.display = "none"
+        }
+    }
+
 
     async function getAllData(){
 
@@ -137,15 +290,220 @@ $( document ).ready(function() {
 
     }
 
+    function showStartPage(){
+
+        let page = 1
+
+        if (main_data.user.interests.length > 0) {
+            page = 6
+        }
+        if (main_data.user.test_result > 0 &&  main_data.user.interests.length == 0) {
+            page = 5
+        }
+        if (main_data.user.test_result == 0 &&  main_data.user.messenger != null) {
+            page = 3
+        }
+        if (main_data.user.messenger == null && main_data.user.name != null) {
+            page = 2
+        }
+
+        document.querySelector(`.reg_pages[data-page="${page}"]`).style.display = 'block'
 
 
 
 
+        document.getElementById("page_load").style.display = 'none'
+        if (main_data.user.approved){
+            document.getElementById("page_main").style.display = 'flex'
+        } else {
+            document.getElementById("page_register").style.display = 'flex'
+        }
+
+    }
+
+    Array.from(document.querySelectorAll(".btn_sos_instruction")).forEach(function(element) {
+        element.addEventListener('click', showSosInstruction )
+    })
+    function showSosInstruction(){
+        Array.from(document.querySelectorAll(".div_sos_instruction")).forEach(function(element) {
+            element.style.display = "none"
+        })
+
+        console.log("click")
+        console.log("click ", this.getAttribute("data-platform"))
+        document.querySelector(`.div_sos_instruction[data-platform="${this.getAttribute("data-platform")}"]`).style.display = "block"
+    }
 
 
 
+    let logo_click = 0
+    let logo_click_timer = null
+    Array.from(document.getElementsByClassName("logo_big")).forEach(function(element) {
+        element.addEventListener('click', clickLogo )
+    })
+    function clickLogo(){
+        logo_click += 1
+
+        console.log("logo click ", logo_click)
+        if (logo_click_timer !== null){
+            clearTimeout(logo_click_timer)
+        }
+
+        if (logo_click >= 5){
+            openAdminPage()
+        }
+
+        logo_click_timer = setTimeout(() => {
+            logo_click = 0
+        }, 1000)
+    }
 
 
+    let admin_info = null
+    function openAdminPage(){
+        sendRequest('post', 'get_admin_info', {})
+            .then(data => {
+                document.getElementById("page_register").style.display = 'none'
+                document.getElementById("page_main").style.display = 'none'
+                document.getElementById("page_admin").style.display = 'flex'
+                admin_info = data
+                setAdminRegistered(data.registered)
+            })
+            .catch(err => console.log(err))
+    }
+
+    Array.from(document.querySelectorAll(".admin_tab_selector .tab")).forEach(function(element) {
+        element.addEventListener('click', clickAdminTab )
+    })
+    function clickAdminTab(){
+        Array.from(document.querySelectorAll(".admin_tab_selector .tab")).forEach(function(element) {
+            element.classList.remove("active")
+        })
+        this.classList.add("active")
+
+        if (this.getAttribute("data-type") == "registered") {
+            setAdminRegistered(admin_info.registered)
+        } else {
+            setAdminApproved(admin_info.approved)
+        }
+    }
+
+    function setAdminRegistered(users){
+        let html = ''
+        users.forEach(item => {
+            html += `
+                        <div class="row_user">
+                            <div class="main">
+                                <div class="header">
+                                    <div>${item.name}</div>
+                                    <div class="time">${parseTime(item.updated_at)}</div>
+                                </div>
+                                <div class="descr">${item.interests}</div>
+                            </div>
+
+                            <div class="second">
+                                <div><b>Телефон:</b> ${item.phone}</div>
+                                <div><b>WA/TG:</b> ${item.messenger}</div>
+                                <div><b>Соц.сеть:</b> ${item.social_media}</div>
+
+                                <div data-user-id="${item.id}" class="btn_approve btn_main">Подтвердить</div>
+                            </div>
+                        </div>
+                        `
+        })
+
+        const table = document.getElementById("users_table")
+        table.innerHTML = html
+
+        Array.from(table.getElementsByClassName("main")).forEach(function(element) {
+            console.log("set")
+            element.addEventListener('click', showUserInfo )
+        })
+        function showUserInfo(){
+            console.log("click")
+            const div_info = this.parentElement.querySelector('.second')
+            div_info.style.display = div_info.style.display === "block" ? "none" : "block"
+        }
+
+        Array.from(table.getElementsByClassName("btn_approve")).forEach(function(element) {
+            element.addEventListener('click', btnApproveUser )
+        })
+
+        function btnApproveUser(){
+            const element = this.parentElement.parentElement
+            const user_id = this.getAttribute("data-user-id")
+
+            sendRequest('post', 'approve_user', {user_id: user_id})
+                .then(data => {
+                    element.style.display = "none"
+                })
+                .catch(err => console.log(err))
+        }
+    }
+    function setAdminApproved(users){
+        let html = ''
+        users.forEach(item => {
+            html += `
+                        <div class="row_user">
+                            <div class="main">
+                                <div class="header">
+                                    <div>${item.name}</div>
+                                    <div class="time">${parseTime(item.updated_at)}</div>
+                                </div>
+                                <div class="descr">${item.interests}</div>
+                            </div>
+
+                            <div class="second">
+                                <div><b>Телефон:</b> ${item.phone}</div>
+                                <div><b>WA/TG:</b> ${item.messenger}</div>
+                                <div><b>Соц.сеть:</b> ${item.social_media}</div>
+                                <div class="div_sos"><b>Контактов SOS:</b> <input class="input_sos_contact" type="number" value="${item.sos_contact}"/></div>
+
+                                <div data-user-id="${item.id}" class="btn_save_sos btn_main">Сохранить</div>
+                            </div>
+                        </div>
+                        `
+        })
+
+        const table = document.getElementById("users_table")
+        table.innerHTML = html
+
+        Array.from(table.querySelectorAll(".main")).forEach(function(element) {
+            console.log("set")
+            element.addEventListener('click', showUserInfo )
+        })
+        function showUserInfo(){
+            console.log("click")
+            const div_info = this.parentElement.querySelector('.second')
+            div_info.style.display = div_info.style.display === "block" ? "none" : "block"
+        }
+
+        Array.from(table.getElementsByClassName("input_sos_contact")).forEach(function(element) {
+            element.addEventListener('change', showSaveSOS )
+        })
+
+        function showSaveSOS(){
+            this.parentElement.parentElement.querySelector(".btn_save_sos").style.display = "block"
+        }
+
+
+
+        Array.from(table.getElementsByClassName("btn_save_sos")).forEach(function(element) {
+            element.addEventListener('click', btnSaveSos )
+        })
+
+        function btnSaveSos(){
+            const element     = this
+            const sos_contact = this.parentElement.querySelector('.input_sos_contact').value
+            const user_id     = this.getAttribute("data-user-id")
+
+            sendRequest('post', 'save_new_sos', {user_id: user_id, sos_contact: sos_contact})
+                .then(data => {
+                    element.style.display = "none"
+                })
+                .catch(err => console.log(err))
+        }
+    }
 
 
 
@@ -205,7 +563,12 @@ $( document ).ready(function() {
 
 
 
+    function parseTime(str){
+        let date = str.split("T")[0].split("-")
+        let time = str.split("T")[1].split(":")
 
+        return time[0] + ":" + time[1] + " " + date[2] + "." + date[1] + "." + date[0]
+    }
 
     function checkRegister(){
         let result = true
@@ -478,7 +841,7 @@ $( document ).ready(function() {
 
     function sendRequest(type, url, body = null) {
         const headers = {
-            'Authorization': 'Token token=123',// + cookie_token,
+            'Authorization': 'Token token=' + cookie_token,
             'Content-type': 'application/json',
         }
 

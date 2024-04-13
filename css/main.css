@@ -49,7 +49,7 @@ p {font-size: 18px;}
 }
 
 
-#page_load, #page_register {
+#page_load, #page_register, #page_admin , #page_main {
     display: flex;
     flex-direction: column;
     margin-top: 60px;
@@ -59,8 +59,20 @@ p {font-size: 18px;}
     justify-content: center;
     align-items: center;
 }
-#page_register, #page_main {
+#page_register, #page_main, #page_admin {
     display: none;
+}
+
+
+.div_vertical_btns {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.div_vertical_btns div {
+    width: 100%;
+    margin: 10px;
 }
 
 .reg_pages {
@@ -112,6 +124,119 @@ input[type="text"], input[type="number"], input[type="password"]  {
     margin-bottom: 20px;
     padding-left: 12px;
 }
+
+
+
+
+
+.container_info {
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-top: 20px;
+    border: 1px solid #8f8f8f;
+}
+
+.container_info .header {
+    text-align: left;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.container_info .content {
+    display: none;
+    text-align: left;
+    margin-top: 20px;
+}
+
+
+
+
+.test_answer {
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-top: 20px;
+    border: 1px solid #8f8f8f;
+}
+
+
+.user_action {
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-top: 20px;
+    border: 1px solid #8f8f8f;
+}
+.user_action.active {
+    border: 3px solid black;
+}
+.user_action .header {
+    text-align: left;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.user_action .descr {
+    text-align: left;
+    margin-top: 10px;
+
+}
+
+
+.div_sos_instruction {
+    display: none;
+}
+
+
+#users_table {
+    width: 100%;
+}
+.row_user {
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin-top: 20px;
+    border: 1px solid #8f8f8f;
+}
+
+.row_user .header {
+    text-align: left;
+    font-weight: bold;
+    font-size: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+.row_user .header .time {
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.row_user .descr {
+    text-align: left;
+    margin-top: 10px;
+}
+
+.row_user .second {
+    display: none;
+    margin-top: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -480,15 +605,66 @@ input[type="text"], input[type="number"], input[type="password"]  {
     border: 1px solid #FF7F5C;
 }
 
-.btn_register {
+.btn_register, .btn_main {
 
     border-radius: 8px;
     padding: 10px 20px;
     flex: 1;
     text-align: center;
     border: 1px solid #000;
+    margin-top: 40px;
+
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.btn_approve {
     margin-top: 20px;
 }
+.btn_save_sos {
+    margin-top: 10px;
+    display: none;
+}
+
+
+.tabs_vertical {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+    font-size: 20px;
+}
+.tabs_vertical .tab.active {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.div_sos {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+
+.div_sos input {
+    width: 50px;
+    text-align: right;
+    height: 25px !important;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 .app_android {

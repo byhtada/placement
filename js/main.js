@@ -13,7 +13,7 @@ $( document ).ready(function() {
     var api_url = "http://127.0.0.1:3000/";
     //api_url = "http://0.0.0.0:3000/";
    // api_url = "https://ro-api-2-delicate-wind-6834.fly.dev/";
-    //api_url = "https://ro-api-fly.fly.dev/"
+    api_url = "https://teremok-api.fly.dev/"
     let work_mode = 'dev'
 
 
